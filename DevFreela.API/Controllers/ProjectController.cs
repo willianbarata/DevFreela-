@@ -41,12 +41,23 @@ namespace DevFreela.API.Controllers
         }
 
         // api/projects/1/comments
-        [HttpPost("{id/comments}")]
+        [HttpPost("{id}/comments")]
         public IActionResult PostComment(int id, [FromBody] CreateCommentsModel createCommentsModel)
         {
             return NoContent();
         }
 
+        [HttpPut("{id}/start")]
+        public IActionResult Start(int id)
+        {
+            return NoContent();
+        }
+
+        [HttpPut("{id}/finish")]
+        public IActionResult Finish(int id)
+        {
+            return NoContent();
+        }
 
     }
 }
