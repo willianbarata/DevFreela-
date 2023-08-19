@@ -1,40 +1,32 @@
 ﻿using DevFreela.Core.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DevFreela.Infrastructure.Persistence
 {
-    public class DevFreelaDbContext
+    public class DevFreelaDbContext : DbContext
     {
-        public DevFreelaDbContext()
+        public DevFreelaDbContext(DbContextOptions options) : base(options)
         {
-            Projects = new List<Project>
-            {
-                new Project("Projeto .Net Core 1", "Descrição proj. 1", 1, 1, 10000),
-                new Project("Projeto .Net Core 2", "Descrição proj. 2", 1, 1, 20000),
-                new Project("Projeto .Net Core 3", "Descrição proj. 3", 1, 1, 30000),
-            };
-
-            Users = new List<User>
-            {
-                new User("Willian", "willian@dev.com", new DateTime(1992,1,1)),
-                new User("Maria", "maria@dev.com", new DateTime(1992,1,1)),
-                new User("Joana", "joana@dev.com", new DateTime(1992,1,1)),
-            };
-
-            Skills = new List<Skill>
-            {
-                new Skill("Html" ),
-                new Skill("Sql" ),
-                new Skill(".Net Core" ),
-            };
 
         }
-        public List<Project> Projects { get; set; }
-        public List<User> Users { get; set; }
-        public List<Skill> Skills { get; set; }
+        public DbSet<Project> Projects { get; set; }
+        public DbSet<ProjectComment> ProjectComments { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Skill> Skills { get; set; }
+        public DbSet<UserSkill> UserSkill { get; set; }
+        
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+           
+        }
+
     }
 }
