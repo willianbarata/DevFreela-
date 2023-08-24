@@ -1,4 +1,5 @@
 ﻿using DevFreela.API.Models;
+using DevFreela.Application.Commands.CreateUser;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DevFreela.API.Controllers
@@ -15,8 +16,16 @@ namespace DevFreela.API.Controllers
 
         //api/users
         [HttpPost]
-        public IActionResult Post([FromBody] CreateUserModel createUserModel)
+        public IActionResult Post([FromBody] CreateUserCommand createUserModel)
         {
+            if(!ModelState.IsValid)
+            {
+                var message = ModelState
+                    .SelectMany(ms => ms.Value.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return BadRequest(message);
+            }
             return NoContent();
         }
 

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DevFreela.Application.ViewModels
 {
-    public class ProjectDetailViewModel
+    public class ProjectDetailsViewModel
     {
-        public ProjectDetailViewModel(int id, string title, string description, decimal? totalCost, DateTime? createdAt, DateTime? finishAt,
+        public ProjectDetailsViewModel(int id, string title, string description, decimal? totalCost, DateTime? createdAt, DateTime? finishAt,
             string projectFullName, string freelancerFullName)
         {
             Id = id;
