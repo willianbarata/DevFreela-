@@ -1,4 +1,7 @@
-﻿using DevFreela.Infrastructure.Persistence;
+﻿using DevFreela.Core.DTOs;
+using DevFreela.Core.Repositories;
+using DevFreela.Core.Services;
+using DevFreela.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,22 +12,33 @@ using System.Threading.Tasks;
 
 namespace DevFreela.Application.Commands.FinishProject
 {
-    public class FinishProjectCommandHandler
+    public class FinishProjectCommandHandler : IRequestHandler<FinishProjectCommand, bool>
     {
-        private readonly DevFreelaDbContext _dbContext;
-        public FinishProjectCommandHandler(DevFreelaDbContext dbContext)
+        private readonly IProjectRepository _projectRepository;
+        private readonly IPaymentService _paymentService;
+        public FinishProjectCommandHandler(IProjectRepository projectRepository, IPaymentService paymentService)
         {
-            _dbContext = dbContext;
+            _projectRepository = projectRepository;
+            _paymentService = paymentService;
         }
 
-        public async Task<Unit> Handle(FinishProjectCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(FinishProjectCommand request, CancellationToken cancellationToken)
         {
-            var project = await _dbContext.Projects.SingleOrDefaultAsync(p => p.Id == request.Id);
+            var project = await _projectRepository.GetByIdAsync(request.Id);
 
-            project.Finish();
-            _dbContext.SaveChanges();
+            if (project.TotalCost is null) 
+                project.SetTotalCost(0);
 
-            return Unit.Value;
+            var paymentInfoDto = new PaymentInfoDTO(request.Id, request.CreditCardNumber,
+                    request.Cvv, request.ExpiresAt, request.FullName, project.TotalCost);
+
+            _paymentService.ProcessPayment(paymentInfoDto);
+
+            project.SetPaymentPending();
+
+            await _projectRepository.SaveChangesAsync();
+
+            return true;
         }
     }
 }
