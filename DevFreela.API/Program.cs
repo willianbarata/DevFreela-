@@ -18,6 +18,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using DevFreela.Infrastructure.Payments;
 using DevFreela.Infrastructure.MessageBus;
+using DevFreela.Application.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +97,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IMessageBusService, MessageBusService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddHostedService<PaymentApprovedConsumer>();
 
 var app = builder.Build();
 
